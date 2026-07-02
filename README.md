@@ -9,14 +9,15 @@ Laravel 12 · Inertia 2 · React 19 + TypeScript · Tailwind v4 + shadcn/ui ·
 PostgreSQL · Fortify (auth) · spatie/laravel-permission (roles) · Pest (tests).
 
 ## Requisitos
-PHP 8.3 · Composer · Node 20 + npm · PostgreSQL.
+PHP 8.3 · Composer · Node 20 + pnpm · PostgreSQL.
+(pnpm: `corepack enable` o `npm i -g pnpm`)
 
 ## Setup
 
 ```bash
 cp .env.example .env         # ajustá DB_USERNAME/DB_PASSWORD a tu Postgres local
 composer install
-npm install
+pnpm install
 php artisan key:generate
 createdb vendi               # o creá la DB "vendi" como prefieras
 php artisan migrate --seed   # crea el schema + tenant demo
@@ -27,18 +28,18 @@ php artisan migrate --seed   # crea el schema + tenant demo
 ## Correr en dev
 
 ```bash
-composer dev     # levanta PHP server + queue + Vite juntos (script del kit)
+composer dev     # levanta PHP server + queue + Vite juntos (usa pnpm auto)
 # o por separado:
 php artisan serve
-npm run dev
+pnpm dev
 ```
 
 ## Verificación
 
 ```bash
 php artisan test      # Pest (incl. tests de aislamiento multi-tenant)
-npm run types:check   # TypeScript
-npm run build         # build de producción de Vite
+pnpm types:check      # TypeScript
+pnpm build            # build de producción de Vite
 ```
 
 ## Arquitectura clave
