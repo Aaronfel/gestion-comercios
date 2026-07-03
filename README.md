@@ -23,7 +23,7 @@ createdb vendi               # o creá la DB "vendi" como prefieras
 php artisan migrate --seed   # crea el schema + tenant demo
 ```
 
-**Login demo:** `camila@bondi.test` / `password` (rol admin del tenant Bondi).
+**Login demo:** `feldmanaaron406@gmail.com` / `password` (rol admin del tenant Bondi).
 
 ## Correr en dev
 

@@ -21,7 +21,7 @@ php artisan test          # Pest (incl. tests de aislamiento multi-tenant)
 pnpm dev | pnpm build | pnpm types:check
 php artisan migrate --seed   # schema + tenant demo
 ```
-Login demo: `camila@bondi.test` / `password`.
+Login demo: `feldmanaaron406@gmail.com` / `password`.
 
 ## Architecture
 - **Multi-tenant row-level.** Cada tabla de dominio lleva `tenant_id`; los modelos

@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Seed the demo tenant so the app is usable right after `migrate --seed`.
-     * Login: camila@bondi.test / password
+     * Login: feldmanaaron406@gmail.com / password
      */
     public function run(): void
     {
@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $admin = User::firstOrCreate(
-            ['email' => 'camila@bondi.test'],
+            ['email' => 'feldmanaaron406@gmail.com'],
             [
                 'name' => 'Camila Ortiz',
                 'password' => Hash::make('password'),
