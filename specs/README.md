@@ -21,31 +21,34 @@ El orden de las specs sigue el orden de build del plan técnico
 
 ## Índice de módulos
 
+Estados: ✅ implementado · 🏗️ parcial · 📝 definido (a iterar) · ⬜ diferido.
+Todas las specs base están escritas; se **iteran** con el socio antes de construir cada módulo.
+
 ### CORE (MVP)
 | Módulo | Fase | Pantalla(s) | Estado | Spec |
 |--------|------|-------------|--------|------|
-| Auth & Tenancy | 0 | Login / shell | ✅ implementado (Fase 0) | — |
-| Productos / Catálogo | 1 | Productos · Ficha | 📝 ejemplo escrito | [modules/productos.md](modules/productos.md) |
-| Stock / Inventario | 2 | Stock | ⬜ pendiente | — |
-| POS / Ventas | 3 | Vender | ⬜ pendiente | — |
-| Clientes / Cuenta corriente | 4 | Clientes | ⬜ pendiente | — |
-| Caja | 3 | (header POS) | ⬜ pendiente | — |
-| Reportes & Dashboard | 5 | Inicio · Reportes | ⬜ pendiente | — |
-| Configuración / Customización | 6 | Configuración | ⬜ pendiente | — |
-| WhatsApp (touchpoints) | 3–6 | POS · Clientes · Config | ⬜ pendiente | — |
-| Insights "IA-lite" | 2–5 | Inicio · Stock | ⬜ pendiente | — |
+| Auth & Tenancy | 0 + 0.5 | Login / shell | 🏗️ parcial (scaffold ok, faltan onboarding/invitaciones/roles) | [modules/auth-tenancy.md](modules/auth-tenancy.md) |
+| Productos / Catálogo | 1 | Productos · Ficha | 📝 definido | [modules/productos.md](modules/productos.md) |
+| Stock / Inventario | 2 | Stock | 📝 definido | [modules/stock.md](modules/stock.md) |
+| POS / Ventas | 3 | Vender | 📝 definido | [modules/pos-ventas.md](modules/pos-ventas.md) |
+| Caja | 3 | (header POS) | 📝 definido | [modules/caja.md](modules/caja.md) |
+| Clientes / Cuenta corriente | 4 | Clientes | 📝 definido | [modules/clientes-cuenta-corriente.md](modules/clientes-cuenta-corriente.md) |
+| Reportes & Dashboard | 5 | Inicio · Reportes | 📝 definido | [modules/reportes-dashboard.md](modules/reportes-dashboard.md) |
+| Configuración / Customización | 6 | Configuración | 📝 definido | [modules/configuracion.md](modules/configuracion.md) |
+| WhatsApp (touchpoints) | 3–6 | POS · Clientes · Config | 📝 definido | [modules/whatsapp.md](modules/whatsapp.md) |
+| Insights "IA-lite" | 2–5 | Inicio · Stock | 📝 definido | [modules/insights-ia-lite.md](modules/insights-ia-lite.md) |
 
-### DIFERIDO (spec a escribir, implementación post-MVP)
-| Módulo | Pantalla(s) | Estado | Spec |
-|--------|-------------|--------|------|
-| AFIP / Facturación electrónica | (Config datos fiscales) | ⬜ pendiente | — |
-| Proveedores & Compras | — | ⬜ pendiente | — |
-| E-commerce / catálogo online | — | ⬜ pendiente | — |
-| Integraciones marketplace | — | ⬜ pendiente | — |
-| Producción / manufactura | — | ⬜ pendiente | — |
-| Promociones & fidelización | — | ⬜ pendiente | — |
-| Empleados | — | ⬜ pendiente | — |
-| Re-precios masivos (% / dólar) | — | ⬜ pendiente | — |
+### DIFERIDO (spec escrita, implementación post-MVP)
+| Módulo | Estado | Spec |
+|--------|--------|------|
+| AFIP / Facturación electrónica | ⬜ diferido | [modules/afip-facturacion.md](modules/afip-facturacion.md) |
+| Proveedores & Compras | ⬜ diferido | [modules/proveedores-compras.md](modules/proveedores-compras.md) |
+| E-commerce / catálogo online | ⬜ diferido | [modules/ecommerce.md](modules/ecommerce.md) |
+| Integraciones marketplace | ⬜ diferido | [modules/integraciones-marketplace.md](modules/integraciones-marketplace.md) |
+| Producción / manufactura | ⬜ diferido | [modules/produccion.md](modules/produccion.md) |
+| Promociones & fidelización | ⬜ diferido | [modules/promociones-fidelizacion.md](modules/promociones-fidelizacion.md) |
+| Empleados | ⬜ diferido | [modules/empleados.md](modules/empleados.md) |
+| Re-precios masivos (% / dólar) | ⬜ diferido | [modules/reprecios-masivos.md](modules/reprecios-masivos.md) |
 
-> AFIP se escribe como spec desde ya (queda como definición lista para enchufar),
-> pero se implementa post-MVP detrás de la interface `FiscalDocumentIssuer`.
+> AFIP se implementa post-MVP detrás de la interface `FiscalDocumentIssuer`
+> (`NullIssuer` por ahora). La spec y el hueco de datos fiscales ya existen.
