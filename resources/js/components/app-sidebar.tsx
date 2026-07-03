@@ -11,6 +11,7 @@ import {
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import { ThemeToggle } from '@/components/theme-toggle';
 import {
     Sidebar,
     SidebarContent,
@@ -20,28 +21,36 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import {
+    clientes,
+    configuracion,
+    dashboard,
+    productos,
+    reportes,
+    stock,
+    vender,
+} from '@/routes';
 import type { NavItem } from '@/types';
 
-// NOTE: hrefs point to dashboard() as placeholders until each module gets its
-// own route in Phases 1–6 (see docs/superpowers/specs/2026-07-01-plan-tecnico-mvp.md).
+// Inicio = dashboard. El resto son placeholders navegables (páginas "en
+// construcción") hasta que cada módulo tenga su pantalla real en las Fases 1–6.
 const generalNav: NavItem[] = [
     { title: 'Inicio', href: dashboard(), icon: House },
-    { title: 'Vender', href: dashboard(), icon: ShoppingCart },
+    { title: 'Vender', href: vender(), icon: ShoppingCart },
 ];
 
 const catalogoNav: NavItem[] = [
-    { title: 'Productos', href: dashboard(), icon: Tag },
-    { title: 'Stock', href: dashboard(), icon: Package },
+    { title: 'Productos', href: productos(), icon: Tag },
+    { title: 'Stock', href: stock(), icon: Package },
 ];
 
 const relacionesNav: NavItem[] = [
-    { title: 'Clientes', href: dashboard(), icon: Users },
-    { title: 'Reportes', href: dashboard(), icon: ChartColumnIncreasing },
+    { title: 'Clientes', href: clientes(), icon: Users },
+    { title: 'Reportes', href: reportes(), icon: ChartColumnIncreasing },
 ];
 
 const sistemaNav: NavItem[] = [
-    { title: 'Configuración', href: dashboard(), icon: Settings },
+    { title: 'Configuración', href: configuracion(), icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -67,6 +76,11 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <ThemeToggle />
+                    </SidebarMenuItem>
+                </SidebarMenu>
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
