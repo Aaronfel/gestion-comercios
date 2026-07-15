@@ -1,0 +1,85 @@
+schema: spec-driven
+
+# Project context — shown to AI when creating OpenSpec artifacts.
+context: |
+    Producto: Vendi — sistema de gestión / punto de venta (POS) para comercios de
+    Argentina. POS, stock, clientes, cuenta corriente, reportes. Multi-tenant:
+    cada comercio es un tenant con su branding (white-label) y sus módulos.
+    SaaS que se VENDE (no hay registro público): los dueños de Vendi (super-admin)
+    crean cada comercio + su primer admin desde un panel de plataforma; el admin
+    del comercio gestiona sus empleados. Objetivo: primer POS "de categoría" (nivel
+    pulpos.com) en Argentina. Rubro demo: indumentaria (Bondi Indumentaria).
+
+    Stack: Laravel 12 (PHP 8.3) · Inertia 2 · React 19 + TypeScript · Tailwind v4 +
+    shadcn/ui · PostgreSQL · Fortify (auth) · spatie/laravel-permission (roles) ·
+    Pest (tests). Gestor JS: pnpm (nunca npm). Charts: Recharts.
+
+    Arquitectura clave:
+    - Multi-tenant row-level: cada tabla de dominio lleva tenant_id; los modelos usan
+      el trait App\Models\Concerns\BelongsToTenant (aplica TenantScope + autocompleta
+      tenant_id). Tenant actual = usuario logueado (middleware SetCurrentTenant →
+      singleton App\Tenancy\CurrentTenant). NUNCA confiar en el front para el scoping.
+      NO aplicar el tenant scope al modelo User (auth resuelve el user antes del tenant).
+    - Roles: super-admin (plataforma, tenant_id null) · admin (gestión del comercio) ·
+      vendedor (operación). Aplicar por middleware/policy; ruteo por rol tras login.
+    - White-label: tenants.settings.accent_color se comparte por Inertia y se aplica
+      en vivo. Feature flags por tenant (tenant_modules). Campos personalizados en JSONB.
+    - Puntos de extensión: facturación tras la interface FiscalDocumentIssuer
+      (NullIssuer por ahora; AFIP es post-MVP, add-on pago vía API tercerizada).
+      Eventos de dominio (SaleCompleted, StockLow) para plugins/insights/WhatsApp.
+
+    Convenciones (obligatorias):
+    - Todo modelo de dominio: use BelongsToTenant + columna tenant_id.
+    - Plata: cálculo server-side; formato es-AR ($ 38.900) solo en display.
+    - Copy en español ("Cargá", "Vendé"). Timezone America/Argentina/Buenos_Aires.
+    - Colores/estilo: tokens de resources/css/app.css (paleta cálida violeta+ámbar,
+      claro/oscuro afinados). Fuentes Clash Display (display/números) + General Sans
+      (body). Nunca Inter/Arial ni blanco puro #FFFFFF (fondo crema #F8F3EC).
+    - TDD con Pest. Para todo modelo tenant-scoped: test de aislamiento obligatorio
+      (un tenant no ve datos de otro).
+
+    Referencias:
+    - Specs funcionales por módulo: specs/modules/*.md (índice en specs/README.md).
+    - Plan técnico + orden de build (Fases 0–6): docs/superpowers/specs/2026-07-01-plan-tecnico-mvp.md
+    - Diseño/producto: docs/superpowers/specs/2026-06-24-pos-argentina-design.md
+    - Design de referencia (prototipo hi-fi, verdad visual): design_handoff_vendi_pos/
+    - Estado: Fase 0 lista (stack, tenancy scaffold, shell temado, auth base).
+      Fase 0.5 en curso: completar auth multi-tenant (super-admin + panel de
+      plataforma + roles + alta de empleados). Ver specs/modules/auth-tenancy.md.
+
+# Per-artifact rules (additive to the schema's built-in guidance).
+# Escritas para v1.4.0 (schema spec-driven: proposal -> specs -> design -> tasks).
+# Claves válidas: proposal, specs, design, tasks (una clave desconocida = warning, se ignora).
+# Nota: `openspec validate` por defecto solo falla ante ERRORES; con `--strict` también
+# fallan los WARNINGS (p. ej. Purpose <50 chars, requirement >500 chars).
+# (>10 deltas y Why fuera de 50-1000 SÍ son ERROR, fallan siempre.)
+rules:
+    proposal:
+        - Escribir en español. Un solo intent por change (que se diga en una oración); si hay varios, partir en changes separados.
+        - "## Why: 50-1000 caracteres (si no, validate falla). Referenciar el problema, la spec funcional del módulo en specs/modules/<x>.md y la fase del plan (docs/superpowers/specs/2026-07-01-plan-tecnico-mvp.md)."
+        - "## Capabilities: usar nombres kebab-case que espejen los módulos existentes (auth-tenancy, productos, stock, pos-ventas, caja, clientes-cuenta-corriente, reportes-dashboard, configuracion, whatsapp, insights-ia-lite, afip-facturacion, ...). Antes de listar Modified Capabilities, revisar openspec/specs/."
+        - Marcar **BREAKING** todo lo que toque el modelo multi-tenant, los roles (super-admin/admin/vendedor), migraciones destructivas, o el contrato de FiscalDocumentIssuer / eventos de dominio.
+        - "## Impact: nombrar migraciones, modelos (indicar tenant_id + BelongsToTenant), rutas Inertia, policies/middleware de rol y páginas React afectadas."
+        - Mantener el "why/what"; el "cómo" (tablas, librerías, algoritmos) va en design.md, no acá.
+        - Incluir una sección "Fuera de alcance" (Non-goals).
+    specs:
+        - Requisitos en español. Cada `### Requirement:` DEBE contener SHALL o MUST en el CUERPO (no solo en el header) y describir un comportamiento observable (uno por requisito).
+        - "Lo que valida la herramienta: header `#### Scenario: <nombre>` con EXACTAMENTE 4 hashtags + contenido no vacío. Con 3 hashtags el scenario es invisible y el requirement queda sin scenarios = ERROR. Cada requirement necesita >=1 scenario."
+        - "Estilo recomendado del cuerpo del scenario (convención, NO lo valida la herramienta): bullets `- **WHEN** ...` / `- **THEN** ...`."
+        - Todo requisito que lea o escriba datos de un comercio DEBE incluir un scenario de aislamiento multi-tenant (un tenant no ve datos de otro), alineado con los criterios de aceptación de specs/modules/<x>.md.
+        - "Requisitos con permisos: agregar un scenario de rol (p. ej. un vendedor recibe 403 donde corresponde; super-admin vs admin vs vendedor)."
+        - Montos en los scenarios en formato es-AR ($ 38.900); aclarar que el cálculo de plata es server-side.
+        - "Deltas: MODIFIED lleva el requisito COMPLETO actualizado (copiar el bloque de openspec/specs/ y editarlo). RENAMED usa FROM:/TO:. REMOVED: el header `### Requirement: <nombre>` basta para validar; agregar **Reason** + **Migration** es convención recomendada (el validador NO los exige)."
+        - "Máx. 10 deltas por change: superarlo HACE FALLAR validate (es error de schema, no warning). Si hay más, partir el change."
+        - "Spec principal (openspec/specs/<cap>/spec.md) != delta: lleva `## Purpose` (min ~50 chars) + `## Requirements`; un `### Requirement:` fuera de `## Requirements`, o un delta header (## ADDED/...) en un spec principal, es error. Ojo: specs/modules/*.md son specs FUNCIONALES nuestras, formato aparte — no son specs de OpenSpec."
+    design:
+        - Crear design.md SOLO si el change es cross-cutting, agrega una dependencia, cambia el modelo de datos, o tiene ambigüedad/seguridad/performance/migración. Para un cambio trivial, omitirlo.
+        - "## Decisions: explicitar cómo el cambio respeta el multi-tenant (tenant_id, TenantScope, NO scopear el modelo User) y los roles; incluir alternativas consideradas y el porqué."
+        - Si toca puntos de extensión (FiscalDocumentIssuer, eventos de dominio, feature flags por tenant), documentar el contrato y cómo se enchufa sin romper el core.
+        - Incluir "## Migration Plan" cuando haya migraciones de DB (tenant_id desde el día 1) + estrategia de rollback.
+        - Para decisiones de UI, referenciar el design de referencia (design_handoff_vendi_pos/) y los tokens de resources/css/app.css.
+    tasks:
+        - "Formato EXACTO: `## N. Grupo` + `- [ ] N.M tarea` (el apply parsea eso; otro formato no se trackea)."
+        - "Ordenar por dependencia: migración -> modelo (con BelongsToTenant) -> policy/rol -> controller + ruta Inertia -> página React (tokens de app.css, Clash Display / General Sans) -> tests."
+        - Cada tarea debe ser verificable. Incluir SIEMPRE una tarea de test Pest de aislamiento multi-tenant cuando se toque un modelo tenant-scoped.
+        - "Tareas finales de verificación: `php artisan test`, `pnpm types:check`, `pnpm build` (pnpm, nunca npm)."
